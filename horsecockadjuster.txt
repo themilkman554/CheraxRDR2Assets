@@ -1,0 +1,49 @@
+#include "script.h"
+#include "keyboard.h"
+
+#define HORSE_COCK  0xE0FD
+#define HORSE_LEFT_Testicale   0x796E
+#define HORSE_Right_Testicale       0x2D2C
+
+float g_girthScale = 1.0f;
+float g_neckScale  = 1.0f;
+float g_bodyScale  = 1.0f;
+
+void ApplyHorseAdjustments(Ped horse)
+{
+    if (!ENTITY::DOES_ENTITY_EXIST(horse)) return;
+
+    // Adjust spine/chest area for “body girth”
+    PED::_SET_PED_SCALE_BONE(horse, HORSE_COCK, g_girthScale, true);
+
+    // Adjust neck length/thickness
+    PED::_SET_PED_SCALE_BONE(horse, HORSE_LEFT_Testicale, g_neckScale, true);
+
+    // General torso size
+    PED::_SET_PED_SCALE_BONE(horse, HORSE_Right_Testicale, g_bodyScale, true);
+}
+
+void ScriptMain()
+{
+    while (true)
+    {
+        Ped player = PLAYER::PLAYER_PED_ID();
+        Ped horse = PLAYER::_GET_ACTIVE_HORSE(player);
+
+        if (horse)
+        {
+            ApplyHorseAdjustments(horse);
+        }
+
+        if (IsKeyJustUp(VK_NUMPAD1)) g_girthScale += 0.05f;
+        if (IsKeyJustUp(VK_NUMPAD2)) g_girthScale -= 0.05f;
+
+        if (IsKeyJustUp(VK_NUMPAD3)) g_neckScale += 0.05f;
+        if (IsKeyJustUp(VK_NUMPAD4)) g_neckScale -= 0.05f;
+
+        if (IsKeyJustUp(VK_NUMPAD5)) g_bodyScale += 0.05f;
+        if (IsKeyJustUp(VK_NUMPAD6)) g_bodyScale -= 0.05f;
+
+        WAIT(0);
+    }
+}
